@@ -77,9 +77,28 @@ Extract MIDI events with comprehensive filtering.
 
 ### Prerequisites
 - Node.js (version 18 or higher)
-- npm or yarn package manager
+- npm (comes with Node.js)
 
-### Install from GitHub
+## Adding to Claude Code
+
+### Method 1: Using npx (Recommended - No Local Installation Required)
+
+Add the following configuration to your Claude Code settings file:
+
+```json
+{
+  "mcpServers": {
+    "midi-analyzer": {
+      "command": "npx",
+      "args": ["sin5ddd/midi-analyzer-mcp"]
+    }
+  }
+}
+```
+
+This method automatically downloads and runs the latest version from GitHub without requiring local installation.
+
+### Method 2: Local Installation (For Development or Offline Use)
 
 1. Clone the repository:
    ```bash
@@ -97,11 +116,7 @@ Extract MIDI events with comprehensive filtering.
    npm run build
    ```
 
-## Adding to Claude Code
-
-### Method 1: Direct Node.js Configuration (Recommended)
-
-Add the following configuration to your Claude Code settings file:
+4. Configure Claude Code:
 
 #### For Windows:
 ```json
@@ -129,20 +144,6 @@ Add the following configuration to your Claude Code settings file:
 }
 ```
 
-### Method 2: Using NPM Scripts
-
-```json
-{
-  "mcpServers": {
-    "midi-analyzer": {
-      "command": "npm",
-      "args": ["start"],
-      "cwd": "/path/to/midi-analyzer-mcp"
-    }
-  }
-}
-```
-
 ### Configuration File Locations
 
 Claude Code configuration files are located at:
@@ -151,35 +152,48 @@ Claude Code configuration files are located at:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Linux**: `~/.config/Claude/claude_desktop_config.json`
 
-### Complete Setup Example
+### Quick Setup with npx (Recommended)
 
-1. **Clone and setup the repository:**
-   ```bash
-   # Clone to your preferred location
-   git clone https://github.com/sin5ddd/midi-analyzer-mcp.git ~/midi-analyzer-mcp
-   cd ~/midi-analyzer-mcp
-   npm install
-   npm run build
-   ```
-
-2. **Add to Claude Code configuration** (example for macOS/Linux):
+1. **Add to Claude Code configuration:**
    ```json
    {
      "mcpServers": {
        "midi-analyzer": {
-         "command": "node",
-         "args": ["/Users/yourusername/midi-analyzer-mcp/dist/index.js"],
-         "cwd": "/Users/yourusername/midi-analyzer-mcp"
+         "command": "npx",
+         "args": ["sin5ddd/midi-analyzer-mcp"]
        }
      }
    }
    ```
 
-3. **Restart Claude Code** to load the new MCP server.
+2. **Restart Claude Code** to load the new MCP server.
 
-4. **Test the installation** by asking Claude Code:
+3. **Test the installation** by asking Claude Code:
    ```
    "Load the MIDI file at [path] and analyze its contents"
+   ```
+
+### Local Development Setup
+
+1. **Clone and setup the repository:**
+   ```bash
+   git clone https://github.com/sin5ddd/midi-analyzer-mcp.git
+   cd midi-analyzer-mcp
+   npm install
+   npm run build
+   ```
+
+2. **Add to Claude Code configuration:**
+   ```json
+   {
+     "mcpServers": {
+       "midi-analyzer": {
+         "command": "node",
+         "args": ["/path/to/midi-analyzer-mcp/dist/index.js"],
+         "cwd": "/path/to/midi-analyzer-mcp"
+       }
+     }
+   }
    ```
 
 ## Development
@@ -218,6 +232,10 @@ npm start
    - Ensure MIDI files are valid SMF format
 
 4. **Updates:**
+
+   **For npx method:** Updates are automatic - npx always downloads the latest version.
+
+   **For local installation:**
    ```bash
    cd /path/to/midi-analyzer-mcp
    git pull origin main
