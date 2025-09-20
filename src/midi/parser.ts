@@ -27,24 +27,37 @@ export class MidiParser {
   private static parseEvent(event: any): MidiEvent {
     const midiEvent: MidiEvent = {
       deltaTime: event.deltaTime,
-      type: event.type
+      type: event.type // midi-file library returns string type, not number
     };
 
     if (event.channel !== undefined) {
       midiEvent.channel = event.channel;
     }
 
+    // Handle note events
     if (event.noteNumber !== undefined) {
       midiEvent.data = [event.noteNumber, event.velocity || 0];
     } else if (event.data) {
       midiEvent.data = event.data;
+    } else if (event.programNumber !== undefined) {
+      // Handle program change
+      midiEvent.data = [event.programNumber];
     }
 
-    if (event.meta) {
+    // Handle meta events
+    if (event.meta || event.type === 'trackName' || event.type === 'setTempo' || 
+        event.type === 'timeSignature' || event.type === 'keySignature' || 
+        event.type === 'text' || event.type === 'marker' || event.type === 'lyrics' || 
+        event.type === 'endOfTrack') {
       midiEvent.meta = {
-        type: event.metaType,
+        type: event.type,
         data: event.data || []
       };
+      
+      // Store text data if available
+      if (event.text) {
+        midiEvent.meta.data = Array.from(Buffer.from(event.text, 'utf8'));
+      }
     }
 
     if (event.running) {
@@ -54,7 +67,13 @@ export class MidiParser {
     return midiEvent;
   }
 
-  static getEventTypeName(type: number): string {
+  static getEventTypeName(type: number | string): string {
+    // midi-file library returns string types directly
+    if (typeof type === 'string') {
+      return type;
+    }
+
+    // Legacy support for numeric types
     const eventTypes: { [key: number]: string } = {
       0x80: 'noteOff',
       0x90: 'noteOn',
@@ -70,7 +89,13 @@ export class MidiParser {
     return eventTypes[type & 0xF0] || 'unknown';
   }
 
-  static getMetaTypeName(metaType: number): string {
+  static getMetaTypeName(metaType: number | string): string {
+    // midi-file library returns string types directly for meta events
+    if (typeof metaType === 'string') {
+      return metaType;
+    }
+
+    // Legacy support for numeric types
     const metaTypes: { [key: number]: string } = {
       0x00: 'sequenceNumber',
       0x01: 'text',

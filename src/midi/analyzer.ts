@@ -209,7 +209,8 @@ export class MidiAnalyzer {
     const eventDetails: MidiEventDetails = {
       tick,
       type: eventTypeName,
-      channel: event.channel
+      channel: event.channel,
+      trackIndex
     };
 
     if (event.data) {
@@ -224,7 +225,7 @@ export class MidiAnalyzer {
     }
 
     if (event.meta) {
-      eventDetails.metaType = MidiParser.getMetaTypeName(event.meta.type);
+      eventDetails.metaType = typeof event.meta.type === 'string' ? event.meta.type : MidiParser.getMetaTypeName(event.meta.type);
       eventDetails.data = event.meta.data;
 
       if (event.meta.data && ['text', 'trackName', 'instrumentName', 'lyrics', 'marker', 'cuePoint'].includes(eventDetails.metaType)) {

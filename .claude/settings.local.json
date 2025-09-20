@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__serena__list_dir",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__search_for_pattern",
+      "mcp__serena__find_symbol",
+      "Bash(tsx test-midi-analysis.ts:*)",
+      "Bash(npx tsx:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__serena__replace_symbol_body",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

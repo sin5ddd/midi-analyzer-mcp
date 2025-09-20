@@ -1,10 +1,10 @@
 export interface MidiEvent {
   deltaTime: number;
-  type: number;
+  type: number | string; // midi-file library returns string types
   channel?: number;
   data?: number[];
   meta?: {
-    type: number;
+    type: number | string;
     data: number[];
   };
   running?: boolean;
@@ -66,6 +66,7 @@ export interface TrackInfo {
 export interface MidiEventDetails {
   tick: number;
   type: string;
+  trackIndex: number;
   channel?: number;
   note?: number;
   velocity?: number;
