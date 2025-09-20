@@ -17,7 +17,7 @@ export class GetTrackDetailsTool {
         },
         filePath: {
           type: 'string',
-          description: 'Path to the MIDI file (if not using fileId)'
+          description: 'Path to the MIDI file (if not using fileId). Either fileId or filePath must be provided.'
         },
         trackIndex: {
           type: 'number',
@@ -74,14 +74,7 @@ export class GetTrackDetailsTool {
           description: 'Filter events by specific values'
         }
       },
-      oneOf: [
-        {
-          required: ['fileId', 'trackIndex']
-        },
-        {
-          required: ['filePath', 'trackIndex']
-        }
-      ]
+      required: ['trackIndex']
     }
   };
 

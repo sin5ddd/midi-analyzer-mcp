@@ -17,13 +17,9 @@ export class GetMidiSummaryTool {
         },
         filePath: {
           type: 'string',
-          description: 'Path to the MIDI file (if not using fileId)'
+          description: 'Path to the MIDI file (if not using fileId). Either fileId or filePath must be provided.'
         }
-      },
-      oneOf: [
-        { required: ['fileId'] },
-        { required: ['filePath'] }
-      ]
+      }
     }
   };
 

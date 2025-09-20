@@ -16,7 +16,7 @@ export class GetTracksListTool {
         },
         filePath: {
           type: 'string',
-          description: 'Path to the MIDI file (if not using fileId)'
+          description: 'Path to the MIDI file (if not using fileId). Either fileId or filePath must be provided.'
         },
         channelFilter: {
           type: 'number',
@@ -30,11 +30,7 @@ export class GetTracksListTool {
           minimum: 0,
           maximum: 127
         }
-      },
-      oneOf: [
-        { required: ['fileId'] },
-        { required: ['filePath'] }
-      ]
+      }
     }
   };
 

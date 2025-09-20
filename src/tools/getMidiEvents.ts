@@ -17,7 +17,7 @@ export class GetMidiEventsTool {
         },
         filePath: {
           type: 'string',
-          description: 'Path to the MIDI file (if not using fileId)'
+          description: 'Path to the MIDI file (if not using fileId). Either fileId or filePath must be provided.'
         },
         timeRange: {
           type: 'object',
@@ -76,11 +76,7 @@ export class GetMidiEventsTool {
           },
           description: 'Filter events by specific values'
         }
-      },
-      oneOf: [
-        { required: ['fileId'] },
-        { required: ['filePath'] }
-      ]
+      }
     }
   };
 
