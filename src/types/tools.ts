@@ -52,6 +52,7 @@ export interface GetMidiEventsArgs {
   eventTypeFilter?: string[];
   trackFilter?: number[];
   valueFilter?: ValueFilter;
+  metaTypeFilter?: string[];
 }
 
 export interface GetMidiEventsResult {

@@ -49,6 +49,15 @@ export class MidiFilter {
     });
   }
 
+  static filterEventsByMetaType(
+    events: MidiEventDetails[],
+    metaTypes: string[]
+  ): MidiEventDetails[] {
+    return events.filter(event =>
+      event.metaType && metaTypes.includes(event.metaType)
+    );
+  }
+
   static filterTracksByChannel(
     tracks: TrackInfo[],
     channel: number
@@ -70,6 +79,7 @@ export class MidiFilter {
       eventTypes?: string[];
       channels?: number[];
       valueFilter?: ValueFilter;
+      metaTypes?: string[];
     }
   ): MidiEventDetails[] {
     let filteredEvents = events;
@@ -88,6 +98,10 @@ export class MidiFilter {
 
     if (filters.valueFilter) {
       filteredEvents = this.filterEventsByValue(filteredEvents, filters.valueFilter);
+    }
+
+    if (filters.metaTypes && filters.metaTypes.length > 0) {
+      filteredEvents = this.filterEventsByMetaType(filteredEvents, filters.metaTypes);
     }
 
     return filteredEvents;

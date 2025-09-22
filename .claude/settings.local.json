@@ -1,9 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__serena__get_current_config",
+      "WebFetch(domain:sites.google.com)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "playwright",
+    "sequential-thinking",
+    "serena",
+    "jetbrains-mcp",
+    "fetch"
+  ]
 }

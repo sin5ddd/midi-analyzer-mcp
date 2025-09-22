@@ -69,6 +69,7 @@ Extract MIDI events with comprehensive filtering.
 - `eventTypeFilter` (array, optional): Event type filter
 - `trackFilter` (array, optional): Track filter
 - `valueFilter` (object, optional): Value filter
+- `metaTypeFilter` (array, optional): Meta event type filter
 
 **Returns:**
 - Filtered array of MIDI events
@@ -281,6 +282,28 @@ Filter events by specific values:
   }
 }
 ```
+
+### Meta Type Filter
+Filter meta events by type (for text, lyrics, markers, etc.):
+```json
+{
+  "metaTypeFilter": ["lyrics", "marker", "text"]
+}
+```
+
+**Supported Meta Event Types:**
+- `text` - Generic text events
+- `lyrics` - Lyric events
+- `marker` - Marker events (section names, rehearsal marks)
+- `trackName` - Track name
+- `instrumentName` - Instrument name
+- `copyright` - Copyright notice
+- `cuePoint` - Cue point events
+- `programName` - Program name
+- `deviceName` - Device name
+- `setTempo` - Tempo change events
+- `timeSignature` - Time signature events
+- `keySignature` - Key signature events
 
 ## Error Handling
 

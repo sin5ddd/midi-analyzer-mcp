@@ -75,6 +75,14 @@ export class GetMidiEventsTool {
             }
           },
           description: 'Filter events by specific values'
+        },
+        metaTypeFilter: {
+          type: 'array',
+          items: {
+            type: 'string',
+            enum: ['text', 'copyright', 'trackName', 'instrumentName', 'lyrics', 'marker', 'cuePoint', 'programName', 'deviceName', 'setTempo', 'timeSignature', 'keySignature']
+          },
+          description: 'Filter meta events by type (text, lyrics, marker, etc.)'
         }
       }
     }
@@ -121,6 +129,7 @@ export class GetMidiEventsTool {
         timeRange?: typeof args.timeRange;
         eventTypes?: string[];
         valueFilter?: typeof args.valueFilter;
+        metaTypes?: string[];
       } = {};
 
       if (args.timeRange) {
@@ -133,6 +142,10 @@ export class GetMidiEventsTool {
 
       if (args.valueFilter) {
         filterOptions.valueFilter = args.valueFilter;
+      }
+
+      if (args.metaTypeFilter && args.metaTypeFilter.length > 0) {
+        filterOptions.metaTypes = args.metaTypeFilter;
       }
 
       if (Object.keys(filterOptions).length > 0) {

@@ -22,6 +22,9 @@ export class MidiFilter {
             return true;
         });
     }
+    static filterEventsByMetaType(events, metaTypes) {
+        return events.filter(event => event.metaType && metaTypes.includes(event.metaType));
+    }
     static filterTracksByChannel(tracks, channel) {
         return tracks.filter(track => track.channel === channel);
     }
@@ -41,6 +44,9 @@ export class MidiFilter {
         }
         if (filters.valueFilter) {
             filteredEvents = this.filterEventsByValue(filteredEvents, filters.valueFilter);
+        }
+        if (filters.metaTypes && filters.metaTypes.length > 0) {
+            filteredEvents = this.filterEventsByMetaType(filteredEvents, filters.metaTypes);
         }
         return filteredEvents;
     }
