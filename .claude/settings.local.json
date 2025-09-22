@@ -3,7 +3,8 @@
     "allow": [
       "mcp__sequential-thinking__sequentialthinking",
       "mcp__serena__get_current_config",
-      "WebFetch(domain:sites.google.com)"
+      "WebFetch(domain:sites.google.com)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

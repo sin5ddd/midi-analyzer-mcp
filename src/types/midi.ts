@@ -1,12 +1,11 @@
 export interface MidiEvent {
   deltaTime: number;
-  type: number;
+  type: string;
   channel?: number;
   data?: number[];
-  meta?: {
-    type: number;
-    data: number[];
-  };
+  noteNumber?: number;
+  velocity?: number;
+  meta?: boolean;
   running?: boolean;
 }
 

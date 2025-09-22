@@ -56,22 +56,20 @@ export class MidiAnalyzer {
 
       // Extract track metadata
       if (event.meta) {
-        const metaTypeName = MidiParser.getMetaTypeName(event.meta.type);
-        if (metaTypeName === 'trackName' && event.meta.data) {
-          trackName = this.bytesToString(event.meta.data);
-        } else if (metaTypeName === 'instrumentName' && event.meta.data) {
-          instrumentName = this.bytesToString(event.meta.data);
+        if (event.type === 'trackName' && (event as any).text) {
+          trackName = (event as any).text;
+        } else if (event.type === 'instrumentName' && (event as any).text) {
+          instrumentName = (event as any).text;
         }
       }
 
       // Count notes and extract channel/program info
-      const eventTypeName = MidiParser.getEventTypeName(event.type);
-      if (eventTypeName === 'noteOn' && event.data && event.data[1] > 0) {
+      if (event.type === 'noteOn' && event.velocity && event.velocity > 0) {
         noteCount++;
         if (channel === undefined && event.channel !== undefined) {
           channel = event.channel;
         }
-      } else if (eventTypeName === 'programChange' && event.data) {
+      } else if (event.type === 'programChange' && event.data) {
         program = event.data[0];
       }
 
@@ -120,8 +118,8 @@ export class MidiAnalyzer {
       let currentTick = 0;
       track.events.forEach(event => {
         currentTick += event.deltaTime;
-        if (event.meta && MidiParser.getMetaTypeName(event.meta.type) === 'setTempo' && event.meta.data) {
-          const microsecondsPerBeat = (event.meta.data[0] << 16) | (event.meta.data[1] << 8) | event.meta.data[2];
+        if (event.meta && event.type === 'setTempo' && (event as any).microsecondsPerBeat) {
+          const microsecondsPerBeat = (event as any).microsecondsPerBeat;
           const bpm = 60000000 / microsecondsPerBeat;
           tempoInfo.push({
             tick: currentTick,
@@ -142,14 +140,14 @@ export class MidiAnalyzer {
       let currentTick = 0;
       track.events.forEach(event => {
         currentTick += event.deltaTime;
-        if (event.meta && MidiParser.getMetaTypeName(event.meta.type) === 'timeSignature' && event.meta.data) {
-          const data = event.meta.data;
+        if (event.meta && event.type === 'timeSignature') {
+          const eventData = event as any;
           timeSignatures.push({
             tick: currentTick,
-            numerator: data[0],
-            denominator: Math.pow(2, data[1]),
-            clocksPerClick: data[2],
-            notesPerQuarter: data[3]
+            numerator: eventData.numerator || 4,
+            denominator: eventData.denominator || 4,
+            clocksPerClick: eventData.metronome || 24,
+            notesPerQuarter: eventData.thirtyseconds || 8
           });
         }
       });
@@ -165,12 +163,12 @@ export class MidiAnalyzer {
       let currentTick = 0;
       track.events.forEach(event => {
         currentTick += event.deltaTime;
-        if (event.meta && MidiParser.getMetaTypeName(event.meta.type) === 'keySignature' && event.meta.data) {
-          const data = event.meta.data;
+        if (event.meta && event.type === 'keySignature') {
+          const eventData = event as any;
           keySignatures.push({
             tick: currentTick,
-            sharpsFlats: data[0] > 127 ? data[0] - 256 : data[0],
-            major: data[1] === 0
+            sharpsFlats: eventData.key || 0,
+            major: (eventData.scale === undefined) ? true : (eventData.scale === 0)
           });
         }
       });
@@ -204,31 +202,58 @@ export class MidiAnalyzer {
     tick: number,
     trackIndex: number
   ): MidiEventDetails | null {
-    const eventTypeName = MidiParser.getEventTypeName(event.type);
+    const normalizedType = MidiParser.normalizeEventType(event.type);
 
     const eventDetails: MidiEventDetails = {
       tick,
-      type: eventTypeName,
+      type: normalizedType,
       channel: event.channel
     };
 
-    if (event.data) {
+    // Handle note events with noteNumber and velocity
+    if (event.noteNumber !== undefined) {
+      eventDetails.note = event.noteNumber;
+      eventDetails.velocity = event.velocity || 0;
+      eventDetails.value1 = event.noteNumber;
+      eventDetails.value2 = event.velocity || 0;
+    } else if (event.data) {
       eventDetails.value1 = event.data[0];
       if (event.data.length > 1) eventDetails.value2 = event.data[1];
       if (event.data.length > 2) eventDetails.value3 = event.data[2];
 
-      if (eventTypeName === 'noteOn' || eventTypeName === 'noteOff') {
+      if (normalizedType === 'noteOn' || normalizedType === 'noteOff') {
         eventDetails.note = event.data[0];
         eventDetails.velocity = event.data[1];
       }
     }
 
     if (event.meta) {
-      eventDetails.metaType = MidiParser.getMetaTypeName(event.meta.type);
-      eventDetails.data = event.meta.data;
+      eventDetails.metaType = normalizedType;
 
-      if (event.meta.data && ['text', 'trackName', 'instrumentName', 'lyrics', 'marker', 'cuePoint'].includes(eventDetails.metaType)) {
-        eventDetails.text = this.bytesToString(event.meta.data);
+      // Check if this is a text-type meta event
+      if (['text', 'copyright', 'trackName', 'instrumentName', 'lyrics', 'marker', 'cuePoint'].includes(normalizedType)) {
+        eventDetails.text = (event as any).text || '';
+      }
+
+      // Copy other meta event data
+      if (normalizedType === 'setTempo') {
+        eventDetails.data = [(event as any).microsecondsPerBeat];
+      } else if (normalizedType === 'timeSignature') {
+        const eventData = event as any;
+        eventDetails.data = [
+          eventData.numerator || 4,
+          eventData.denominator || 4,
+          eventData.metronome || 24,
+          eventData.thirtyseconds || 8
+        ];
+      } else if (normalizedType === 'keySignature') {
+        const eventData = event as any;
+        eventDetails.data = [
+          eventData.key || 0,
+          eventData.scale || 0
+        ];
+      } else if ((event as any).text) {
+        eventDetails.text = (event as any).text;
       }
     }
 

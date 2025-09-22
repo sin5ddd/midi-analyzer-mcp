@@ -29,54 +29,51 @@ export class MidiParser {
             midiEvent.channel = event.channel;
         }
         if (event.noteNumber !== undefined) {
+            midiEvent.noteNumber = event.noteNumber;
+            midiEvent.velocity = event.velocity || 0;
             midiEvent.data = [event.noteNumber, event.velocity || 0];
         }
         else if (event.data) {
             midiEvent.data = event.data;
         }
-        if (event.meta) {
-            midiEvent.meta = {
-                type: event.metaType,
-                data: event.data || []
-            };
+        if (event.meta === true) {
+            midiEvent.meta = true;
+            // Copy all meta-specific properties
+            Object.keys(event).forEach(key => {
+                if (key !== 'deltaTime' && key !== 'type' && key !== 'meta') {
+                    midiEvent[key] = event[key];
+                }
+            });
         }
         if (event.running) {
             midiEvent.running = event.running;
         }
         return midiEvent;
     }
-    static getEventTypeName(type) {
-        const eventTypes = {
-            0x80: 'noteOff',
-            0x90: 'noteOn',
-            0xA0: 'noteAftertouch',
-            0xB0: 'controller',
-            0xC0: 'programChange',
-            0xD0: 'channelAftertouch',
-            0xE0: 'pitchBend',
-            0xF0: 'sysEx',
-            0xFF: 'meta'
+    static normalizeEventType(type) {
+        // midi-file library already provides string event types
+        // Just normalize some common variations
+        const typeMap = {
+            'noteOn': 'noteOn',
+            'noteOff': 'noteOff',
+            'noteAftertouch': 'noteAftertouch',
+            'controller': 'controller',
+            'programChange': 'programChange',
+            'channelAftertouch': 'channelAftertouch',
+            'pitchBend': 'pitchBend',
+            'sysEx': 'sysEx',
+            'endOfTrack': 'endOfTrack',
+            'setTempo': 'setTempo',
+            'timeSignature': 'timeSignature',
+            'keySignature': 'keySignature',
+            'text': 'text',
+            'copyrightNotice': 'copyright',
+            'trackName': 'trackName',
+            'instrumentName': 'instrumentName',
+            'lyrics': 'lyrics',
+            'marker': 'marker',
+            'cuePoint': 'cuePoint'
         };
-        return eventTypes[type & 0xF0] || 'unknown';
-    }
-    static getMetaTypeName(metaType) {
-        const metaTypes = {
-            0x00: 'sequenceNumber',
-            0x01: 'text',
-            0x02: 'copyrightNotice',
-            0x03: 'trackName',
-            0x04: 'instrumentName',
-            0x05: 'lyrics',
-            0x06: 'marker',
-            0x07: 'cuePoint',
-            0x20: 'channelPrefix',
-            0x2F: 'endOfTrack',
-            0x51: 'setTempo',
-            0x54: 'smpteOffset',
-            0x58: 'timeSignature',
-            0x59: 'keySignature',
-            0x7F: 'sequencerSpecific'
-        };
-        return metaTypes[metaType] || 'unknown';
+        return typeMap[type] || type;
     }
 }
