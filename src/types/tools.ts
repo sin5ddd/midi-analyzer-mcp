@@ -57,3 +57,23 @@ export interface GetMidiEventsArgs {
 export interface GetMidiEventsResult {
   events: MidiEventDetails[];
 }
+
+export interface GetChordProgressionArgs {
+  fileId?: string;
+  filePath?: string;
+  trackFilter?: number[];
+  groupingThresholdMs?: number;
+}
+
+export interface ChordProgressionResult {
+    name: string;
+    startTick: number;
+    endTick: number;
+    durationTicks: number;
+    notes: number[];
+}
+
+export interface GetChordProgressionResult {
+  chordCount: number;
+  chords: ChordProgressionResult[];
+}

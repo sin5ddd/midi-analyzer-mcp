@@ -14,6 +14,7 @@ import { GetMidiSummaryTool } from './tools/getMidiSummary.js';
 import { GetTracksListTool } from './tools/getTracksList.js';
 import { GetTrackDetailsTool } from './tools/getTrackDetails.js';
 import { GetMidiEventsTool } from './tools/getMidiEvents.js';
+import { GetChordProgressionTool } from './tools/getChordProgression.js';
 
 class MidiAnalyzerServer {
   private server: Server;
@@ -45,6 +46,7 @@ class MidiAnalyzerServer {
           GetTracksListTool.definition,
           GetTrackDetailsTool.definition,
           GetMidiEventsTool.definition,
+          GetChordProgressionTool.definition,
         ],
       };
     });
@@ -101,6 +103,16 @@ class MidiAnalyzerServer {
                 {
                   type: 'text',
                   text: JSON.stringify(await GetMidiEventsTool.execute(args as any), null, 2),
+                },
+              ],
+            };
+
+          case 'get_chord_progression':
+            return {
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(await GetChordProgressionTool.execute(args as any), null, 2),
                 },
               ],
             };
