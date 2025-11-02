@@ -2,6 +2,10 @@
 
 A Model Context Protocol (MCP) server for analyzing MIDI SMF (Standard MIDI File) files. This server provides comprehensive tools for loading, parsing, and analyzing MIDI files.
 
+<a href="https://glama.ai/mcp/servers/@sin5ddd/midi-analyer-mcp">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@sin5ddd/midi-analyer-mcp/badge" alt="MIDI Analyzer Server MCP server" />
+</a>
+
 ## Features
 
 - **MIDI File Loading**: Load and parse MIDI SMF files
