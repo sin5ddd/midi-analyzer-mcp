@@ -415,36 +415,34 @@ impl ServerHandler for MidiService {
                 },
                 Tool {
                     name: "midi_file_info".into(),
-                    description: Some("ファイル全体概要（メタ/テンポ/拍子/キー/曲尺/トラック統計など）".into()),
+                    description: Some("ファイル全体概要（メタ/テンポ/拍子/キー/曲尺/トラック統計など）。file_idまたはpathのいずれかが必須".into()),
                     input_schema: std::sync::Arc::new(serde_json::from_value::<serde_json::Map<String, Value>>(
                         serde_json::json!({
                             "type": "object",
                             "properties": {
-                                "file_id": {"type": "string"},
-                                "path": {"type": "string"},
+                                "file_id": {"type": "string", "description": "midi_open_fileで取得したID"},
+                                "path": {"type": "string", "description": "MIDIファイルのパス"},
                                 "include_tempo_map": {"type": "boolean", "default": true},
                                 "include_time_signatures": {"type": "boolean", "default": true},
                                 "include_key_signatures": {"type": "boolean", "default": true}
-                            },
-                            "anyOf": [{"required": ["file_id"]}, {"required": ["path"]}]
+                            }
                         })).unwrap()),
                     annotations: None,
                     output_schema: None,
                 },
                 Tool {
                     name: "midi_track_list".into(),
-                    description: Some("トラック一覧（名前/チャンネル/プログラム/ノート統計）".into()),
+                    description: Some("トラック一覧（名前/チャンネル/プログラム/ノート統計）。file_idまたはpathのいずれかが必須".into()),
                     input_schema: std::sync::Arc::new(serde_json::from_value::<serde_json::Map<String, Value>>(
                         serde_json::json!({
                             "type": "object",
                             "properties": {
-                                "file_id": {"type": "string"},
-                                "path": {"type": "string"},
+                                "file_id": {"type": "string", "description": "midi_open_fileで取得したID"},
+                                "path": {"type": "string", "description": "MIDIファイルのパス"},
                                 "track_indexes": {"type": "array", "items": {"type": "integer"}},
                                 "channel_filter": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 15}},
                                 "program_filter": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 127}}
-                            },
-                            "anyOf": [{"required": ["file_id"]}, {"required": ["path"]}]
+                            }
                         })).unwrap()),
                     annotations: None,
                     output_schema: None,
